@@ -20,12 +20,32 @@ function conectarDB() {
 
 function formatearPotencia($tipo, $valor) {
     if (!is_numeric($valor)) return 'Valor inválido';
-    $dbm = ($tipo === 'retorno') ? ($valor / 100 - 100) : ($valor / 100);
-    $color = 'black';
-    if ($dbm >= -17.99) $color = 'red';
-    elseif ($dbm >= -24.99 && $dbm <= -18.00) $color = 'green';
-    elseif ($dbm >= -27.99 && $dbm <= -25.00) $color = 'orange';
-    elseif ($dbm <= -28.00) $color = 'red';
+    
+    if ($tipo === 'retorno') {
+        $dbm = ($valor - 10000) / 100;
+    } else {
+        $dbm = $valor / 100;
+    }
+    
+    // Aplicar rangos de color según el tipo
+    if ($tipo === 'retorno') {
+        // Para potencia de retorno: nuevos rangos
+        if ($dbm >= -26.85 && $dbm < 0) {
+            $color = 'green';
+        } elseif ($dbm > -100 && $dbm < -26.85) {
+            $color = 'orange';
+        } else {
+            // Fuera de rango: no mostrar nada
+            return '';
+        }
+    } else {
+        // Para potencia de recepción: mantener rangos originales
+        if ($dbm >= -17.99) $color = 'red';
+        elseif ($dbm >= -24.99 && $dbm <= -18.00) $color = 'green';
+        elseif ($dbm >= -27.99 && $dbm <= -25.00) $color = 'orange';
+        elseif ($dbm <= -28.00) $color = 'red';
+    }
+    
     return "<span style='color:$color'>{$dbm} dBm</span>";
 }
 
